@@ -61,6 +61,21 @@ services:
       - ${ROOT}/sonarr:/config
       - ${MEDIA}:/data
 
+  whisparr:
+    image: ghcr.io/hotio/whisparr:latest
+    restart: unless-stopped
+    depends_on:
+      - vpn
+      - torrent
+      - prowlarr
+    env_file:
+      - stack.env
+    ports:
+      - 6969:6969
+    volumes:
+      - ${ROOT}/whisparr:/config
+      - ${MEDIA}:/data
+
   overseerr:
     image: lscr.io/linuxserver/overseerr:latest
     restart: unless-stopped
