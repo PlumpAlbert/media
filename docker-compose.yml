@@ -1,0 +1,82 @@
+# vim:ft=yaml.docker-compose
+version: "3"
+
+services:
+  vpn:
+    container_name: vpn
+    image: qmcgaw/gluetun:latest
+    restart: always
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8888:8888 # HTTP proxy
+      - 8388:8388 # Shadowsocks
+    volumes:
+      - ${ROOT}/vpn:/gluetun
+    env_file:
+      - .env
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    restart: unless-stopped
+    depends_on:
+      - vpn
+      - qbittorrent
+    env_file:
+      - .env
+    volumes:
+      - ${ROOT}/radarr:/config
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    restart: unless-stopped
+    depends_on:
+      - vpn
+      - qbittorrent
+    env_file:
+      - .env
+    volumes:
+      - ${ROOT}/sonarr:/config
+
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    restart: unless-stopped
+    depends_on:
+      - vpn
+      - sonarr
+      - radarr
+      - plex
+
+  torrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    restart: always
+    depends_on:
+      - vpn
+    ports:
+      - 8080:8080
+    env_file:
+      - .env
+    volumes:
+      - ${ROOT}/torrent:/config
+      - ${MEDIA}/downloads:/downloads
+
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    restart: always
+    network_mode: 'host'
+    env_file:
+      - .env
+    volumes:
+      - ${ROOT}/plex:/config
+      - ${MEDIA}/series:/tv
+      - ${MEDIA}/movies:/movies
+
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ${ROOT}/tautulli:/config
+    ports:
+      - 8181:8181
