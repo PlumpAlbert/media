@@ -29,6 +29,17 @@ services:
     volumes:
       - ${ROOT}/radarr:/config
 
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    restart: unless-stopped
+    depends_on:
+      - vpn
+      - torrent
+    env_file:
+      - .env
+    volumes:
+      - ${ROOT}/prowlarr:/config
+
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     restart: unless-stopped
