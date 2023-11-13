@@ -114,6 +114,7 @@ services:
       - ${ROOT}/plex:/config
       - ${MEDIA}/series:/tv
       - ${MEDIA}/movies:/movies
+      - ${MEDIA}/porn:/porn
 
   tautulli:
     image: lscr.io/linuxserver/tautulli:latest
