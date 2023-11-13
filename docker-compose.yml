@@ -26,6 +26,8 @@ services:
       - torrent
     env_file:
       - stack.env
+    ports:
+      - 7878:7878
     volumes:
       - ${ROOT}/radarr:/config
 
@@ -37,6 +39,8 @@ services:
       - torrent
     env_file:
       - stack.env
+    ports:
+      - 9696:9696
     volumes:
       - ${ROOT}/prowlarr:/config
 
@@ -48,6 +52,8 @@ services:
       - torrent
     env_file:
       - stack.env
+    ports:
+      - 8989:8989
     volumes:
       - ${ROOT}/sonarr:/config
 
@@ -59,6 +65,10 @@ services:
       - sonarr
       - radarr
       - plex
+    ports:
+      - 5055:5055
+    volumes:
+      - ${ROOT}/overseerr:/config
 
   torrent:
     image: lscr.io/linuxserver/qbittorrent:latest
