@@ -14,7 +14,7 @@ services:
     volumes:
       - ${ROOT}/vpn:/gluetun
     env_file:
-      - .env
+      - stack.env
 
   radarr:
     build:
@@ -25,7 +25,7 @@ services:
       - vpn
       - torrent
     env_file:
-      - .env
+      - stack.env
     volumes:
       - ${ROOT}/radarr:/config
 
@@ -36,7 +36,7 @@ services:
       - vpn
       - torrent
     env_file:
-      - .env
+      - stack.env
     volumes:
       - ${ROOT}/prowlarr:/config
 
@@ -47,7 +47,7 @@ services:
       - vpn
       - torrent
     env_file:
-      - .env
+      - stack.env
     volumes:
       - ${ROOT}/sonarr:/config
 
@@ -68,7 +68,7 @@ services:
     ports:
       - 8080:8080
     env_file:
-      - .env
+      - stack.env
     volumes:
       - ${ROOT}/torrent:/config
       - ${MEDIA}/downloads:/downloads
@@ -78,7 +78,7 @@ services:
     restart: always
     network_mode: 'host'
     env_file:
-      - .env
+      - stack.env
     volumes:
       - ${ROOT}/plex:/config
       - ${MEDIA}/series:/tv
@@ -88,7 +88,7 @@ services:
     image: lscr.io/linuxserver/tautulli:latest
     restart: always
     env_file:
-      - .env
+      - stack.env
     volumes:
       - ${ROOT}/tautulli:/config
     ports:
