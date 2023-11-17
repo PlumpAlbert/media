@@ -130,8 +130,6 @@ services:
       - stack.env
     environment:
       VIRTUAL_HOST: "${VIRTUAL_HOST_TORRENT}"
-      VIRTUAL_PATH: "${VIRTUAL_PATH_TORRENT}"
-      VIRTUAL_DEST: /
       VIRTUAL_PORT: 8080
     volumes:
       - torrent_data:/config
