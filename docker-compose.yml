@@ -32,6 +32,7 @@ services:
     environment:
       VIRTUAL_HOST: "${VIRTUAL_HOST_VPN}"
       VIRTUAL_PATH: "${VIRTUAL_PATH_VPN}"
+      VIRTUAL_DEST: /
       VIRTUAL_PORT: 8888
     env_file:
       - stack.env
@@ -51,6 +52,7 @@ services:
     environment:
       VIRTUAL_HOST: "${VIRTUAL_HOST_RADARR}"
       VIRTUAL_PATH: "${VIRTUAL_PATH_RADARR}"
+      VIRTUAL_DEST: /
       VIRTUAL_PORT: 7878
     env_file:
       - stack.env
@@ -72,6 +74,7 @@ services:
     environment:
       VIRTUAL_HOST: "${VIRTUAL_HOST_PROWLARR}"
       VIRTUAL_PATH: "${VIRTUAL_PATH_PROWLARR}"
+      VIRTUAL_DEST: /
       VIRTUAL_PORT: 9696
     volumes:
       - prowlarr_data:/config
@@ -91,6 +94,7 @@ services:
     environment:
       VIRTUAL_HOST: "${VIRTUAL_HOST_SONARR}"
       VIRTUAL_PATH: "${VIRTUAL_PATH_SONARR}"
+      VIRTUAL_DEST: /
       VIRTUAL_PORT: 8989
     volumes:
       - sonarr_data:/config
@@ -127,6 +131,7 @@ services:
     environment:
       VIRTUAL_HOST: "${VIRTUAL_HOST_TORRENT}"
       VIRTUAL_PATH: "${VIRTUAL_PATH_TORRENT}"
+      VIRTUAL_DEST: /
       VIRTUAL_PORT: 8080
     volumes:
       - torrent_data:/config
@@ -144,6 +149,7 @@ services:
     environment:
       VIRTUAL_HOST: "${VIRTUAL_HOST_PLEX}"
       VIRTUAL_PATH: "${VIRTUAL_PATH_PLEX}"
+      VIRTUAL_DEST: /
       VIRTUAL_PORT: 32400
     volumes:
       - plex_data:/config
@@ -161,6 +167,7 @@ services:
     environment:
       VIRTUAL_HOST: "${VIRTUAL_HOST_TAUTULLI}"
       VIRTUAL_PATH: "${VIRTUAL_PATH_TAUTULLI}"
+      VIRTUAL_DEST: /
       VIRTUAL_PORT: 32400
     volumes:
       - tautulli_data:/config
