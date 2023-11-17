@@ -1,11 +1,20 @@
 # vim:ft=yaml.docker-compose
 version: "3"
 
+networks:
+  internal:
+  proxy:
+    name: "${NGINX_PROXY_NETWORK_NAME}"
+    external: true
+
 services:
   vpn:
     container_name: vpn
     image: qmcgaw/gluetun:latest
     restart: always
+    networks:
+      - proxy
+      - internal
     cap_add:
       - NET_ADMIN
     ports:
@@ -13,6 +22,10 @@ services:
       - 8388:8388 # Shadowsocks
     volumes:
       - ${ROOT}/vpn:/gluetun
+    environment:
+      VIRTUAL_HOST: "${VIRTUAL_HOST_VPN}"
+      VIRTUAL_PATH: "${VIRTUAL_PATH_VPN}"
+      VIRTUAL_PORT: 8888
     env_file:
       - stack.env
 
@@ -25,10 +38,15 @@ services:
       - vpn
       - torrent
       - prowlarr
+    networks:
+      - proxy
+      - internal
+    environment:
+      VIRTUAL_HOST: "${VIRTUAL_HOST_RADARR}"
+      VIRTUAL_PATH: "${VIRTUAL_PATH_RADARR}"
+      VIRTUAL_PORT: 7878
     env_file:
       - stack.env
-    ports:
-      - 7878:7878
     volumes:
       - ${ROOT}/radarr:/config
       - ${MEDIA}:/data
@@ -36,27 +54,37 @@ services:
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     restart: unless-stopped
+    networks:
+      - proxy
+      - internal
     depends_on:
       - vpn
       - torrent
     env_file:
       - stack.env
-    ports:
-      - 9696:9696
+    environment:
+      VIRTUAL_HOST: "${VIRTUAL_HOST_PROWLARR}"
+      VIRTUAL_PATH: "${VIRTUAL_PATH_PROWLARR}"
+      VIRTUAL_PORT: 9696
     volumes:
       - ${ROOT}/prowlarr:/config
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     restart: unless-stopped
+    networks:
+      - proxy
+      - internal
     depends_on:
       - vpn
       - torrent
       - prowlarr
     env_file:
       - stack.env
-    ports:
-      - 8989:8989
+    environment:
+      VIRTUAL_HOST: "${VIRTUAL_HOST_SONARR}"
+      VIRTUAL_PATH: "${VIRTUAL_PATH_SONARR}"
+      VIRTUAL_PORT: 8989
     volumes:
       - ${ROOT}/sonarr:/config
       - ${MEDIA}:/data
@@ -64,26 +92,35 @@ services:
   overseerr:
     image: lscr.io/linuxserver/overseerr:latest
     restart: unless-stopped
+    networks:
+      - proxy
+      - internal
     depends_on:
       - vpn
       - sonarr
       - radarr
       - plex
       - tautulli
-    ports:
-      - 5055:5055
+    environment:
+      VIRTUAL_HOST: "${VIRTUAL_HOST_OVERSEERR}"
+      VIRTUAL_PORT: 5055
     volumes:
       - ${ROOT}/overseerr:/config
 
   torrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     restart: always
+    networks:
+      - proxy
+      - internal
     depends_on:
       - vpn
-    ports:
-      - 8080:8080
     env_file:
       - stack.env
+    environment:
+      VIRTUAL_HOST: "${VIRTUAL_HOST_TORRENT}"
+      VIRTUAL_PATH: "${VIRTUAL_PATH_TORRENT}"
+      VIRTUAL_PORT: 8080
     volumes:
       - ${ROOT}/torrent:/config
       - ${MEDIA}/downloads:/downloads
@@ -92,9 +129,15 @@ services:
   plex:
     image: lscr.io/linuxserver/plex:latest
     restart: always
-    network_mode: 'host'
     env_file:
       - stack.env
+    networks:
+      - proxy
+      - internal
+    environment:
+      VIRTUAL_HOST: "${VIRTUAL_HOST_PLEX}"
+      VIRTUAL_PATH: "${VIRTUAL_PATH_PLEX}"
+      VIRTUAL_PORT: 32400
     volumes:
       - ${ROOT}/plex:/config
       - ${MEDIA}/series:/tv
@@ -106,6 +149,13 @@ services:
     restart: always
     env_file:
       - stack.env
+    networks:
+      - proxy
+      - internal
+    environment:
+      VIRTUAL_HOST: "${VIRTUAL_HOST_TAUTULLI}"
+      VIRTUAL_PATH: "${VIRTUAL_PATH_TAUTULLI}"
+      VIRTUAL_PORT: 32400
     volumes:
       - ${ROOT}/tautulli:/config
     ports:
