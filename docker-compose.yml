@@ -31,6 +31,9 @@ services:
       - vpn_data:/gluetun
     env_file:
       - stack.env
+    ports:
+      - "${HTTP_PROXY_PORT}:8888"
+      - "${SHADOWSOCKS_PORT}:8388"
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
