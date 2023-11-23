@@ -21,7 +21,7 @@ services:
   vpn:
     container_name: vpn
     image: qmcgaw/gluetun:latest
-    restart: always
+    restart: unless-stopped
     networks:
       - proxy
       - internal
@@ -29,18 +29,11 @@ services:
       - NET_ADMIN
     volumes:
       - vpn_data:/gluetun
-    environment:
-      VIRTUAL_HOST: "${VIRTUAL_HOST_VPN}"
-      VIRTUAL_PATH: "${VIRTUAL_PATH_VPN}"
-      VIRTUAL_DEST: /
-      VIRTUAL_PORT: 8888
     env_file:
       - stack.env
 
   radarr:
-    build:
-      context: .
-      dockerfile: ./radarr/Dockerfile
+    image: lscr.io/linuxserver/radarr:latest
     restart: unless-stopped
     depends_on:
       - vpn
@@ -49,11 +42,6 @@ services:
     networks:
       - proxy
       - internal
-    environment:
-      VIRTUAL_HOST: "${VIRTUAL_HOST_RADARR}"
-      VIRTUAL_PATH: "${VIRTUAL_PATH_RADARR}"
-      VIRTUAL_DEST: /
-      VIRTUAL_PORT: 7878
     env_file:
       - stack.env
     volumes:
@@ -71,11 +59,6 @@ services:
       - torrent
     env_file:
       - stack.env
-    environment:
-      VIRTUAL_HOST: "${VIRTUAL_HOST_PROWLARR}"
-      VIRTUAL_PATH: "${VIRTUAL_PATH_PROWLARR}"
-      VIRTUAL_DEST: /
-      VIRTUAL_PORT: 9696
     volumes:
       - prowlarr_data:/config
 
@@ -91,11 +74,6 @@ services:
       - prowlarr
     env_file:
       - stack.env
-    environment:
-      VIRTUAL_HOST: "${VIRTUAL_HOST_SONARR}"
-      VIRTUAL_PATH: "${VIRTUAL_PATH_SONARR}"
-      VIRTUAL_DEST: /
-      VIRTUAL_PORT: 8989
     volumes:
       - sonarr_data:/config
       - ${MEDIA}:/data
@@ -112,15 +90,12 @@ services:
       - radarr
       - plex
       - tautulli
-    environment:
-      VIRTUAL_HOST: "${VIRTUAL_HOST_OVERSEERR}"
-      VIRTUAL_PORT: 5055
     volumes:
       - overseerr_data:/config
 
   torrent:
     image: lscr.io/linuxserver/qbittorrent:latest
-    restart: always
+    restart: unless-stopped
     networks:
       - proxy
       - internal
@@ -128,9 +103,6 @@ services:
       - vpn
     env_file:
       - stack.env
-    environment:
-      VIRTUAL_HOST: "${VIRTUAL_HOST_TORRENT}"
-      VIRTUAL_PORT: 8080
     volumes:
       - torrent_data:/config
       - ${MEDIA}/downloads:/downloads
@@ -138,17 +110,12 @@ services:
 
   plex:
     image: lscr.io/linuxserver/plex:latest
-    restart: always
+    restart: unless-stopped
     env_file:
       - stack.env
     networks:
       - proxy
       - internal
-    environment:
-      VIRTUAL_HOST: "${VIRTUAL_HOST_PLEX}"
-      VIRTUAL_PATH: "${VIRTUAL_PATH_PLEX}"
-      VIRTUAL_DEST: /
-      VIRTUAL_PORT: 32400
     volumes:
       - plex_data:/config
       - ${MEDIA}/series:/tv
@@ -156,17 +123,12 @@ services:
 
   tautulli:
     image: lscr.io/linuxserver/tautulli:latest
-    restart: always
+    restart: unless-stopped
     env_file:
       - stack.env
     networks:
       - proxy
       - internal
-    environment:
-      VIRTUAL_HOST: "${VIRTUAL_HOST_TAUTULLI}"
-      VIRTUAL_PATH: "${VIRTUAL_PATH_TAUTULLI}"
-      VIRTUAL_DEST: /
-      VIRTUAL_PORT: 32400
     volumes:
       - tautulli_data:/config
     ports:
