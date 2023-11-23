@@ -123,6 +123,8 @@ services:
       - plex_data:/config
       - ${MEDIA}/series:/tv
       - ${MEDIA}/movies:/movies
+    devices:
+      - "/dev/dri:/dev/dri"
 
   tautulli:
     image: lscr.io/linuxserver/tautulli:latest
