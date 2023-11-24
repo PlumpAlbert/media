@@ -96,7 +96,7 @@ services:
       - overseerr_data:/config
 
   torrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
+    image: lscr.io/linuxserver/deluge:latest
     restart: unless-stopped
     networks:
       proxy:
