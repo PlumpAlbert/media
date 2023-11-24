@@ -3,6 +3,12 @@ version: "3"
 
 networks:
   internal:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.5.0.0/24
+          ip_range: 10.5.0.0/24
+          gateway: 10.5.0.1
   proxy:
     name: "${NGINX_PROXY_NETWORK_NAME}"
     external: true
@@ -23,8 +29,9 @@ services:
     image: qmcgaw/gluetun:latest
     restart: unless-stopped
     networks:
-      - proxy
-      - internal
+      proxy:
+      internal:
+        ipv4_address: 10.5.0.2
     cap_add:
       - NET_ADMIN
     volumes:
@@ -42,9 +49,7 @@ services:
       - vpn
       - torrent
       - prowlarr
-    networks:
-      - proxy
-      - internal
+    network_mode: 'service:vpn'
     env_file:
       - stack.env
     volumes:
@@ -54,9 +59,7 @@ services:
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     restart: unless-stopped
-    networks:
-      - proxy
-      - internal
+    network_mode: 'service:vpn'
     depends_on:
       - vpn
       - torrent
@@ -68,9 +71,7 @@ services:
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     restart: unless-stopped
-    networks:
-      - proxy
-      - internal
+    network_mode: 'service:vpn'
     depends_on:
       - vpn
       - torrent
@@ -84,9 +85,7 @@ services:
   overseerr:
     image: lscr.io/linuxserver/overseerr:latest
     restart: unless-stopped
-    networks:
-      - proxy
-      - internal
+    network_mode: 'service:vpn'
     depends_on:
       - vpn
       - sonarr
@@ -100,10 +99,9 @@ services:
     image: lscr.io/linuxserver/qbittorrent:latest
     restart: unless-stopped
     networks:
-      - proxy
-      - internal
-    depends_on:
-      - vpn
+      proxy:
+      internal:
+        ipv4_address: 10.5.0.3
     env_file:
       - stack.env
     volumes:
@@ -116,9 +114,7 @@ services:
     restart: unless-stopped
     env_file:
       - stack.env
-    networks:
-      - proxy
-      - internal
+    network_mode: 'host'
     volumes:
       - plex_data:/config
       - ${MEDIA}/series:/tv
@@ -132,9 +128,8 @@ services:
     env_file:
       - stack.env
     networks:
-      - proxy
-      - internal
+      proxy:
+      internal:
+        ipv4_address: 10.5.0.4
     volumes:
       - tautulli_data:/config
-    ports:
-      - 8181:8181
