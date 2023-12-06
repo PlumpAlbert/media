@@ -143,6 +143,8 @@ services:
   tautulli:
     image: lscr.io/linuxserver/tautulli:latest
     restart: unless-stopped
+    depends_on:
+      - plex
     env_file:
       - stack.env
     networks:
@@ -154,6 +156,8 @@ services:
 
   plex_cleaner:
     image: nitrikx/plex-cleaner
+    depends_on:
+      - plex
     networks:
       - internal
     environment:
