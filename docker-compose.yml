@@ -159,7 +159,8 @@ services:
     depends_on:
       - plex
     networks:
-      - internal
+      internal:
+        ipv4_address: 10.5.0.5
     environment:
       EXECUTION_CRON_EXPRESSION: "0 0 * * *"
     volumes:
