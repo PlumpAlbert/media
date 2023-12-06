@@ -137,7 +137,6 @@ services:
 
   plex_cleaner:
     image: nitrikx/plex-cleaner
-    restart: never
     networks:
       - internal
     environment:
