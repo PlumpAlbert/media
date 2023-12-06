@@ -22,6 +22,7 @@ volumes:
   torrent_data:
   plex_data:
   tautulli_data:
+  plex_cleaner_data:
 
 services:
   vpn:
@@ -133,3 +134,15 @@ services:
         ipv4_address: 10.5.0.4
     volumes:
       - tautulli_data:/config
+
+  plex_cleaner:
+    image: nitrikx/plex-cleaner
+    restart: never
+    networks:
+      - internal
+    environment:
+      EXECUTION_CRON_EXPRESSION: "0 0 * * *"
+    volumes:
+      - plex_cleaner_data:/config
+      - ${MEDIA}:/plexdata
+
