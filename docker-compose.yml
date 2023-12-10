@@ -18,7 +18,7 @@ volumes:
   radarr_data:
   prowlarr_data:
   sonarr_data:
-  whisparr_data:
+  tdarr_data:
   bazarr_data:
   overseerr_data:
   torrent_data:
@@ -99,8 +99,8 @@ services:
       - bazarr_data:/config
       - ${MEDIA}:/data
 
-  whisparr:
-    image: ghcr.io/hotio/whisparr:latest
+  tdarr:
+    image: ghcr.io/haveagitgat/tdarr:latest
     restart: unless-stopped
     network_mode: 'service:vpn'
     depends_on:
@@ -108,12 +108,22 @@ services:
       - torrent
       - prowlarr
     environment:
-      - UMASK=002
+      UMASK_SET: 002
+      serverIP: 0.0.0.0
+      serverPort: 8266
+      webUIPort: 8266
+      internalNode: true
+      inContainer: true
+      ffmpegVersion: 6
+      nodeName: InternalNode
     env_file:
       - stack.env
+    devices:
+      - /dev/dri:/dev/dri
     volumes:
-      - whisparr_data:/config
-      - ${MEDIA}:/data
+      - tdarr_data:/app
+      - /tmp:/temp
+      - ${MEDIA}:/media
 
   overseerr:
     image: lscr.io/linuxserver/overseerr:latest
