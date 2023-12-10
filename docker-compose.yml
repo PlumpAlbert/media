@@ -181,6 +181,7 @@ services:
 
   plex_cleaner:
     image: nitrikx/plex-cleaner
+    restart: always
     depends_on:
       - plex
     networks:
